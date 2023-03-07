@@ -42,12 +42,28 @@ void ARCharacter::Tick(float DeltaTime)
 
 void ARCharacter::MoveForward(float value)
 {
-	AddMovementInput(GetActorForwardVector(), value);
+	FRotator ControlRot = GetControlRotation();
+	ControlRot.Pitch = 0.0f;
+	ControlRot.Roll = 0.0f;
+
+	AddMovementInput(ControlRot.Vector(), value);
+	// AddMovementInput(GetActorForwardVector(), value);
 }
 
 void ARCharacter::MoveRight(float value)
 {
-	AddMovementInput(GetActorRightVector(), value);
+	FRotator ControlRot = GetControlRotation();
+	ControlRot.Pitch = 0.0f;
+	ControlRot.Roll = 0.0f;
+
+	// X = Forward (Red)
+	// Y = Right (Green)
+	// Z = Up (Blue)
+
+	FVector RightVector = FRotationMatrix(ControlRot).GetScaledAxis(EAxis::Y);
+	AddMovementInput(RightVector, value);
+
+	// AddMovementInput(GetActorRightVector(), value);
 }
 
 // Called to bind functionality to input
