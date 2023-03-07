@@ -4,6 +4,7 @@
 #include "RCharacter.h"
 
 #include "Camera/CameraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
 // Sets default values
@@ -14,10 +15,15 @@ ARCharacter::ARCharacter()
 
 
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>("SpringArmComp");
+	SpringArmComp->bUsePawnControlRotation = true;
 	SpringArmComp->SetupAttachment(RootComponent);
 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>("CameraComp");
 	CameraComp->SetupAttachment(SpringArmComp);
+
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	bUseControllerRotationYaw = false;
 }
 
 // Called when the game starts or when spawned
@@ -39,6 +45,10 @@ void ARCharacter::MoveForward(float value)
 	AddMovementInput(GetActorForwardVector(), value);
 }
 
+void ARCharacter::MoveRight(float value)
+{
+	AddMovementInput(GetActorRightVector(), value);
+}
 
 // Called to bind functionality to input
 void ARCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -46,7 +56,9 @@ void ARCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &ARCharacter::MoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", this, &ARCharacter::MoveRight);
 
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 }
 
