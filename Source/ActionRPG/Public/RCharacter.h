@@ -6,6 +6,9 @@
 #include "GameFramework/Character.h"
 #include "RCharacter.generated.h"
 
+class USpringArmComponent;
+class UCameraComponent;
+
 UCLASS()
 class ACTIONRPG_API ARCharacter : public ACharacter
 {
@@ -16,8 +19,17 @@ public:
 	ARCharacter();
 
 protected:
+
+	UPROPERTY(VisibleAnywhere)
+	USpringArmComponent* SpringArmComp;
+
+	UPROPERTY(VisibleAnywhere)
+	UCameraComponent* CameraComp;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	void MoveForward(float value);
 
 public:	
 	// Called every frame
