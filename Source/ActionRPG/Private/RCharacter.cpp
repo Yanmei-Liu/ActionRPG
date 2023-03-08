@@ -66,6 +66,8 @@ void ARCharacter::MoveRight(float value)
 	// AddMovementInput(GetActorRightVector(), value);
 }
 
+
+
 // Called to bind functionality to input
 void ARCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -76,5 +78,20 @@ void ARCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+
+	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ARCharacter::PrimaryAttack);
 }
 
+
+void ARCharacter::PrimaryAttack()
+{
+	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+
+	FTransform SpawnTM = FTransform(GetControlRotation(), HandLocation);
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+
+	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
+}
