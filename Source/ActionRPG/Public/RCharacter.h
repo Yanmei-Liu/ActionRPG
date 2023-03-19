@@ -25,6 +25,8 @@ public:
 
 protected:
 
+	bool CanAirJump;
+
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArmComp;
 
@@ -37,7 +39,10 @@ protected:
 	void MoveForward(float value);
 	void MoveRight(float value);
 
+	void OnJump();
 	void PrimaryAttack();
+
+	void OnLanded(const FHitResult& Hit);
 
 public:	
 	// Called every frame

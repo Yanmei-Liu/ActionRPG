@@ -30,7 +30,8 @@ ARCharacter::ARCharacter()
 void ARCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	CanAirJump = true;
 }
 
 // Called every frame
@@ -79,7 +80,32 @@ void ARCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ARCharacter::OnJump);
 	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ARCharacter::PrimaryAttack);
+}
+
+
+void ARCharacter::OnJump()
+{
+	if (GetCharacterMovement()->IsMovingOnGround()) {
+		// If the character is on the ground, initiate a jump.
+		Jump();
+
+	} else if (GetCharacterMovement()->IsFalling()) {
+		// If the character is falling, initiate an air jump if allowed.
+		if (CanAirJump) {
+			Jump();
+			CanAirJump = false;
+		}
+	}
+}
+
+void ARCharacter::OnLanded(const FHitResult& Hit)
+{
+	Super::OnLanded(Hit);
+
+	// Reset CanAirJump to true when the player lands on the ground.
+	CanAirJump = true;
 }
 
 
