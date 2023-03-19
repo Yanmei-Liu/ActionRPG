@@ -8,6 +8,7 @@
 
 class USpringArmComponent;
 class UCameraComponent;
+class URInteractionComponent;
 
 UCLASS()
 class ACTIONRPG_API ARCharacter : public ACharacter
@@ -33,6 +34,9 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	UCameraComponent* CameraComp;
 
+	UPROPERTY(VisibleAnywhere)
+	URInteractionComponent* InteractionComp;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
@@ -41,6 +45,7 @@ protected:
 
 	void OnJump();
 	void PrimaryAttack();
+	void PrimaryInteract();
 
 	void OnLanded(const FHitResult& Hit);
 

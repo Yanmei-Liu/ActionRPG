@@ -3,6 +3,7 @@
 
 #include "RCharacter.h"
 
+#include "RInteractionComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -20,6 +21,8 @@ ARCharacter::ARCharacter()
 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>("CameraComp");
 	CameraComp->SetupAttachment(SpringArmComp);
+
+	InteractionComp = CreateDefaultSubobject<URInteractionComponent>("InteractionComp");
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
@@ -82,30 +85,26 @@ void ARCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ARCharacter::OnJump);
 	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ARCharacter::PrimaryAttack);
+	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed, this, &ARCharacter::PrimaryInteract);
 }
 
 
 void ARCharacter::OnJump()
 {
-	if (GetCharacterMovement()->IsMovingOnGround()) {
+	if (GetCharacterMovement()->IsMovingOnGround()) 
+	{
 		// If the character is on the ground, initiate a jump.
 		Jump();
 
-	} else if (GetCharacterMovement()->IsFalling()) {
+	} else if (GetCharacterMovement()->IsFalling()) 
+	{
 		// If the character is falling, initiate an air jump if allowed.
-		if (CanAirJump) {
+		if (CanAirJump) 
+		{
 			Jump();
 			CanAirJump = false;
 		}
 	}
-}
-
-void ARCharacter::OnLanded(const FHitResult& Hit)
-{
-	Super::OnLanded(Hit);
-
-	// Reset CanAirJump to true when the player lands on the ground.
-	CanAirJump = true;
 }
 
 
@@ -120,4 +119,9 @@ void ARCharacter::PrimaryAttack()
 
 
 	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
+}
+
+void ARCharacter::PrimaryInteract()
+{
+	InteractionComp->PrimaryInteract();
 }
