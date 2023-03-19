@@ -4,6 +4,7 @@
 #include "RInteractionComponent.h"
 
 #include "RGameplayInterface.h"
+#include "ProfilingDebugging/CookStats.h"
 
 // Sets default values for this component's properties
 URInteractionComponent::URInteractionComponent()
@@ -48,17 +49,34 @@ void URInteractionComponent::PrimaryInteract()
 
 	FVector End = EyeLocation + (EyeRotation.Vector() * 1800);
 
-	FHitResult Hit;
-	GetWorld()->LineTraceSingleByObjectType(Hit, EyeLocation, End, ObjectQueryParams);
+	// FHitResult Hit;
+	// bool bBlockingHit = GetWorld()->LineTraceSingleByObjectType(Hit, EyeLocation, End, ObjectQueryParams);
 
-	AActor* HitActor = Hit.GetActor();
-	if(HitActor)
+	TArray<FHitResult> Hits;
+	float Radius = 30.f;
+	FCollisionShape CShape;
+	CShape.SetSphere(Radius);
+
+	bool bBlockingHit = GetWorld()->SweepMultiByObjectType(Hits, EyeLocation, End, FQuat::Identity, ObjectQueryParams, CShape);
+	FColor LineColor = bBlockingHit ? FColor::Green : FColor::Red;
+
+	for (FHitResult Hit: Hits)
 	{
-		if (HitActor->Implements<URGameplayInterface>())
+		AActor* HitActor = Hit.GetActor();
+		if (HitActor)
 		{
-			APawn* HitPawn = Cast<APawn>(MyOwner);
+			if (HitActor->Implements<URGameplayInterface>())
+			{
+				APawn* HitPawn = Cast<APawn>(MyOwner);
 
-			IRGameplayInterface::Execute_Interact(HitActor, HitPawn);
+				IRGameplayInterface::Execute_Interact(HitActor, HitPawn);
+				break;
+			}
 		}
+
+		DrawDebugSphere(GetWorld(), Hit.ImpactPoint, Radius, 32, LineColor, false, 2.0f);
 	}
+	
+	DrawDebugLine(GetWorld(), EyeLocation, End, LineColor, false, 2.0f, 0, 2.0f);
+
 }
