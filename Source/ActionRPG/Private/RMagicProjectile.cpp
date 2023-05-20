@@ -3,6 +3,7 @@
 
 #include "RMagicProjectile.h"
 
+#include "RAttributeComponent.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Particles/ParticleSystemComponent.h"
@@ -18,6 +19,7 @@ ARMagicProjectile::ARMagicProjectile()
 	// SphereComp->SetCollisionResponseToAllChannels(ECR_Ignore);
 	// SphereComp->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 	SphereComp->SetCollisionProfileName("Projectile");
+	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &ARMagicProjectile::OnActorOverlap);
 	RootComponent = SphereComp;
 
 	EffectComp = CreateDefaultSubobject<UParticleSystemComponent>("EffectComp");
@@ -27,6 +29,22 @@ ARMagicProjectile::ARMagicProjectile()
 	MovementComp->InitialSpeed = 1000.0f;
 	MovementComp->bRotationFollowsVelocity = true;
 	MovementComp->bInitialVelocityInLocalSpace = true;
+}
+
+void ARMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 otherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor)
+	{
+		URAttributeComponent * AttributeComp = Cast<URAttributeComponent>(OtherActor->GetComponentByClass(URAttributeComponent::StaticClass()));
+		if (AttributeComp)
+		{
+			AttributeComp->ApplyHealthChange(-15.0f);
+
+			Destroy();
+		}
+	}
+
 }
 
 // Called when the game starts or when spawned

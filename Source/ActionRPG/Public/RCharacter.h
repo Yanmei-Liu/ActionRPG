@@ -9,6 +9,7 @@
 class USpringArmComponent;
 class UCameraComponent;
 class URInteractionComponent;
+class URAttributeComponent;
 
 UCLASS()
 class ACTIONRPG_API ARCharacter : public ACharacter
@@ -41,6 +42,10 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 	URInteractionComponent* InteractionComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+	URAttributeComponent* AttributeComp;
+
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
