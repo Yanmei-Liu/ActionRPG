@@ -7,6 +7,8 @@
 #include "RAttributeComponent.generated.h"
 
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnHealthChanged, AActor*, InstigatorActor, URAttributeComponent*, OwningComp, float, NewHeath, float, Delta);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ACTIONRPG_API URAttributeComponent : public UActorComponent
 {
@@ -27,6 +29,9 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+
+	UPROPERTY(BlueprintAssignable)
+	FOnHealthChanged OnHealthChanged;
 
 	UFUNCTION(BlueprintCallable, Category="Attributes")
 	bool ApplyHealthChange(float delta);

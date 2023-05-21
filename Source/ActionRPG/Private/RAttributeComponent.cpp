@@ -9,6 +9,7 @@ URAttributeComponent::URAttributeComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
+	Health = 100.0f;
 
 	// ...
 }
@@ -27,6 +28,8 @@ void URAttributeComponent::BeginPlay()
 bool URAttributeComponent::ApplyHealthChange(float delta)
 {
 	Health += delta;
+
+	OnHealthChanged.Broadcast(nullptr, this, Health, delta);
 
 	return true;
 }
